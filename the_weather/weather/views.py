@@ -1,10 +1,16 @@
 import requests
 from django.shortcuts import render
 from .models import City
+from .forms import CityForm
 
 def index(request):
 	url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid=d8e707fa698de72bec3f2f5331d11e8a'
-	city = 'Las Vegas'
+
+	if request.method == 'POST':
+		form = CityForm(request.POST)
+		form.save()
+
+	form = CityForm()
 
 	cities = City.objects.all()
 
@@ -25,6 +31,6 @@ def index(request):
 
 		weather_data.append(city_weather)
 
-	context = {'weather_data' : weather_data}
+	context = {'weather_data' : weather_data, 'form' : form}
 
 	return render(request, 'weather/weather.html', context) 
